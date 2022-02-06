@@ -34,6 +34,8 @@
 
 //WriteIntAnswer(intInputArray, intTarget, expected);
 
+using System.Diagnostics;
+
 var testCases = new (int[] inputArray, int target, (int index1, int index2) expected)[]
 {
     (new int[] { 1, 3, 4, 5, 7, 10, 11 }, 9, (3, 4)),
@@ -41,12 +43,18 @@ var testCases = new (int[] inputArray, int target, (int index1, int index2) expe
     (new int[] { 2, 3, 4 }, 6, (1, 3)),
     (new int[] { -1, 0 }, -1, (1, 2)),
     (new int[] { -11, -7, -5, -4, -3, -1, 0 }, -9, (3, 4)),
+    (new int[] { -12, -7, -5, -4, -3, -1, 0, 2, 7, 11, 15 }, 9, (8, 9)),
 };
+var stopwatch = new Stopwatch();
 
 foreach (var testCase in testCases)
 {
-    WriteAnswer(MidpointSolution, nameof(MidpointSolution),
+    stopwatch.Restart();
+    WriteAnswer(VideoSolution, nameof(VideoSolution),
         testCase.inputArray, testCase.target, testCase.expected);
+    stopwatch.Stop();
+    Console.WriteLine($"Duration: {stopwatch.ElapsedTicks}");
+    Console.WriteLine();
 }
 
 Console.ReadKey();
@@ -87,7 +95,6 @@ static void WriteAnswer(Func<int[], int, (int index1, int index2)> solution, str
     Console.WriteLine($"Target:   {target}");
     Console.WriteLine($"Expected: {expected}");
     Console.WriteLine($"Actual:   {solution(inputArray, target)}");
-    Console.WriteLine();
 }
 
 //static (uint index1, uint index2) UnintSolution(IEnumerable<uint> inputArray, uint target)
