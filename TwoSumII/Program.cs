@@ -50,40 +50,40 @@ var stopwatch = new Stopwatch();
 foreach (var testCase in testCases)
 {
     stopwatch.Restart();
-    WriteAnswer(VideoSolution, nameof(VideoSolution),
+    WriteAnswer(IntSolution3, nameof(IntSolution3),
         testCase.inputArray, testCase.target, testCase.expected);
     stopwatch.Stop();
-    Console.WriteLine($"Duration: {stopwatch.ElapsedTicks}");
+    Console.WriteLine($"Duration: {stopwatch.ElapsedMilliseconds}");
     Console.WriteLine();
 }
 
 Console.ReadKey();
 
-static void WriteUIntAnswer(uint[] inputArray, uint target, (int index1, int index2) expected)
-{
-    Console.WriteLine($"Name:     {nameof(UnintSolution2)}");
-    Console.Write($"Input:    (");
-    inputArray.Select((e, i) => (e, i)).ToList()
-        .ForEach(ei => Console.Write($"{ei.e}{(ei.i + 1 == inputArray.Length ? string.Empty : ", ")}"));
-    Console.WriteLine(")");
-    Console.WriteLine($"Target:   {target}");
-    Console.WriteLine($"Expected: {expected}");
-    Console.WriteLine($"Actual:   {UnintSolution2(inputArray, target)}");
-    Console.WriteLine();
-}
+//static void WriteUIntAnswer(uint[] inputArray, uint target, (int index1, int index2) expected)
+//{
+//    Console.WriteLine($"Name:     {nameof(UnintSolution2)}");
+//    Console.Write($"Input:    (");
+//    inputArray.Select((e, i) => (e, i)).ToList()
+//        .ForEach(ei => Console.Write($"{ei.e}{(ei.i + 1 == inputArray.Length ? string.Empty : ", ")}"));
+//    Console.WriteLine(")");
+//    Console.WriteLine($"Target:   {target}");
+//    Console.WriteLine($"Expected: {expected}");
+//    Console.WriteLine($"Actual:   {UnintSolution2(inputArray, target)}");
+//    Console.WriteLine();
+//}
 
-static void WriteIntAnswer(int[] inputArray, int target, (int index1, int index2) expected)
-{
-    Console.WriteLine($"Name:    {nameof(IntSolution1)}");
-    Console.Write($"Input:    (");
-    inputArray.Select((e, i) => (e, i)).ToList()
-        .ForEach(ei => Console.Write($"{ei.e}{(ei.i + 1 == inputArray.Length ? string.Empty : ", ")}"));
-    Console.WriteLine(")");
-    Console.WriteLine($"Target:   {target}");
-    Console.WriteLine($"Expected: {expected}");
-    Console.WriteLine($"Actual:   {IntSolution1(inputArray, target)}");
-    Console.WriteLine();
-}
+//static void WriteIntAnswer(int[] inputArray, int target, (int index1, int index2) expected)
+//{
+//    Console.WriteLine($"Name:    {nameof(IntSolution1)}");
+//    Console.Write($"Input:    (");
+//    inputArray.Select((e, i) => (e, i)).ToList()
+//        .ForEach(ei => Console.Write($"{ei.e}{(ei.i + 1 == inputArray.Length ? string.Empty : ", ")}"));
+//    Console.WriteLine(")");
+//    Console.WriteLine($"Target:   {target}");
+//    Console.WriteLine($"Expected: {expected}");
+//    Console.WriteLine($"Actual:   {IntSolution1(inputArray, target)}");
+//    Console.WriteLine();
+//}
 
 static void WriteAnswer(Func<int[], int, (int index1, int index2)> solution, string solutionName, int[] inputArray, int target, (int index1, int index2) expected)
 {
@@ -224,6 +224,47 @@ static (int index1, int index2) IntSolution1(int[] inputArray, int target)
         }
 
         differencesWithIndex.Push((i, target - element));
+    }
+
+    throw new InvalidDataException();
+}
+
+static (int index1, int index2) IntSolution2(int[] inputArray, int target)
+{
+    var differences = new Stack<int>();
+    for (var i = inputArray.Length - 1; i >= 0; i--)
+    {
+        var element = inputArray[i];
+        var index2 = i;
+        foreach(var difference in differences)
+        {
+            index2++;
+            if(difference == element)
+            {
+                return (i + 1, index2 + 1);
+            }
+        }
+
+        differences.Push(target - element);
+    }
+
+    throw new InvalidDataException();
+}
+
+static (int index1, int index2) IntSolution3(int[] inputArray, int target)
+{
+    for (var i = inputArray.Length - 1; i >= 0; i--)
+    {
+        var element = inputArray[i];
+        for (var j = i + 1; j < inputArray.Length; j++)
+        {
+            if(inputArray[j] == element)
+            {
+                return (i + 1, j + 1);
+            }
+        }
+
+        inputArray[i] = target - element;
     }
 
     throw new InvalidDataException();
