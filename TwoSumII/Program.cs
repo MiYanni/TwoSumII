@@ -50,7 +50,7 @@ var stopwatch = new Stopwatch();
 foreach (var testCase in testCases)
 {
     stopwatch.Restart();
-    WriteAnswer(IntSolution3, nameof(IntSolution3),
+    WriteAnswer(VideoSolution2, nameof(VideoSolution2),
         testCase.inputArray, testCase.target, testCase.expected);
     stopwatch.Stop();
     Console.WriteLine($"Duration: {stopwatch.ElapsedMilliseconds}");
@@ -251,20 +251,19 @@ static (int index1, int index2) IntSolution2(int[] inputArray, int target)
     throw new InvalidDataException();
 }
 
-static (int index1, int index2) IntSolution3(int[] inputArray, int target)
+static (int index1, int index2) WaveSolution(int[] inputArray, int target)
 {
     for (var i = inputArray.Length - 1; i >= 0; i--)
     {
-        var element = inputArray[i];
         for (var j = i + 1; j < inputArray.Length; j++)
         {
-            if(inputArray[j] == element)
+            if(inputArray[j] == inputArray[i])
             {
                 return (i + 1, j + 1);
             }
         }
 
-        inputArray[i] = target - element;
+        inputArray[i] = target - inputArray[i];
     }
 
     throw new InvalidDataException();
@@ -291,9 +290,37 @@ static (int index1, int index2) VideoSolution(int[] inputArray, int target)
             return (leftIndex + 1, rightIndex + 1);
         }
     }
+
     throw new InvalidDataException();
 }
 
+static (int index1, int index2) VideoSolution2(int[] inputArray, int target)
+{
+    var leftIndex = 0;
+    var rightIndex = inputArray.Length - 1;
+    var loopCount = 0;
+
+    while (leftIndex < rightIndex)
+    {
+        loopCount++;
+        var sum = inputArray[leftIndex] + inputArray[rightIndex];
+        if (sum == target)
+        {
+            Console.WriteLine($"LoopCount: {loopCount}");
+            return (leftIndex + 1, rightIndex + 1);
+        }
+        if (sum > target)
+        {
+            rightIndex--;
+            continue;
+        }
+
+        leftIndex++;
+    }
+    throw new InvalidDataException();
+}
+
+// Incorrect Solution
 static (int index1, int index2) MidpointSolution(int[] inputArray, int target)
 {
     var leftIndex = 0;
@@ -344,5 +371,131 @@ static (int index1, int index2) MidpointSolution(int[] inputArray, int target)
 
         return (leftIndex + 1, rightIndex + 1);
     }
+
+    throw new InvalidDataException();
+}
+
+static (int index1, int index2) MidpointSolution2(int[] inputArray, int target)
+{
+    var leftIndex = 0;
+    var rightIndex = inputArray.Length - 1;
+    var midIndex = inputArray.Length / 2;
+
+    while (leftIndex < rightIndex)
+    {
+        var sum = inputArray[leftIndex] + inputArray[rightIndex];
+        if (sum > target)
+        {
+            var midSum = inputArray[leftIndex] + inputArray[midIndex];
+            if (midSum > target)
+            {
+                rightIndex = midIndex - 1;
+                midIndex = (leftIndex + rightIndex) / 2;
+                continue;
+            }
+            if (midSum < target)
+            {
+                rightIndex--;
+                midIndex = (leftIndex + rightIndex) / 2;
+                continue;
+            }
+
+            return (leftIndex + 1, midIndex + 1);
+        }
+        if (sum < target)
+        {
+            var midSum = inputArray[midIndex] + inputArray[rightIndex];
+            if (midSum > target)
+            {
+                leftIndex++;
+                midIndex = (leftIndex + rightIndex) / 2;
+                continue;
+            }
+            if (midSum < target)
+            {
+                leftIndex = midIndex + 1;
+                midIndex = (leftIndex + rightIndex) / 2;
+                continue;
+            }
+
+            return (midIndex + 1, rightIndex + 1);
+        }
+
+        return (leftIndex + 1, rightIndex + 1);
+    }
+
+    throw new InvalidDataException();
+}
+
+//static (int index1, int index2) MidpointSolution3(int[] inputArray, int target)
+//{
+//    var leftIndex = 0;
+//    var rightIndex = inputArray.Length - 1;
+
+//    while (leftIndex < rightIndex)
+//    {
+//        var sum = inputArray[leftIndex] + inputArray[rightIndex];
+//        if(sum == target)
+//        {
+//            return (leftIndex + 1, rightIndex + 1);
+//        }
+
+//        var isGreater = sum > target;
+//        var midIndex = (leftIndex + rightIndex) / 2;
+//        var midSum = inputArray[midIndex] + (isGreater ? inputArray[leftIndex] : inputArray[rightIndex]);
+//        if (midSum == target)
+//        {
+//            return isGreater ? (leftIndex + 1, midIndex + 1) : (midIndex + 1, rightIndex + 1);
+//        }
+
+//        rightIndex = midSum < target ? midIndex + 1 : rightIndex + (isGreater ? -1 : 0);
+//        leftIndex = midSum > target ? midIndex - 1 : leftIndex + (isGreater ? 0 : 1);
+//    }
+
+//    throw new InvalidDataException();
+//}
+
+static (int index1, int index2) MidpointSolution3(int[] inputArray, int target)
+{
+    var leftIndex = 0;
+    var rightIndex = inputArray.Length - 1;
+    var loopCount = 0;
+
+    while (leftIndex < rightIndex)
+    {
+        loopCount++;
+        var sum = inputArray[leftIndex] + inputArray[rightIndex];
+        if (sum == target)
+        {
+            Console.WriteLine($"LoopCount: {loopCount}");
+            return (leftIndex + 1, rightIndex + 1);
+        }
+
+        var midIndex = (leftIndex + rightIndex) / 2;
+        if (sum > target)
+        {
+            var midSum = inputArray[leftIndex] + inputArray[midIndex];
+            if (midSum == target)
+            {
+                Console.WriteLine($"LoopCount: {loopCount}");
+                return (leftIndex + 1, midIndex + 1);
+            }
+
+            rightIndex = (midSum > target ? midIndex : rightIndex) - 1;
+            continue;
+        }
+        if (sum < target)
+        {
+            var midSum = inputArray[midIndex] + inputArray[rightIndex];
+            if (midSum == target)
+            {
+                Console.WriteLine($"LoopCount: {loopCount}");
+                return (midIndex + 1, rightIndex + 1);
+            }
+
+            leftIndex = (midSum < target ? midIndex : leftIndex) + 1;
+        }
+    }
+
     throw new InvalidDataException();
 }
